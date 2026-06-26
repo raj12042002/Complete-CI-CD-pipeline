@@ -1,1 +1,39 @@
+const comments = [
+{
+user:"ashishsolanki_1",
+comment:"Mai police ki taraf se hi aaya tha",
+likes:226000
+},
+{
+user:"MADDY_SPEAKS",
+comment:"The King of Burari",
+likes:3000
+},
+{
+user:"amyah2350",
+comment:"Your humour was great addition to the panel",
+likes:4000
+},
+{
+user:"Andy_x_10",
+comment:"We Want Samay In Judge",
+likes:225
+}
+];
+
+const totalLikes = comments.reduce(
+(sum,c)=>sum+c.likes,
+0
+);
+
+console.log("Total Likes:",totalLikes);
+
+const topComment = comments.reduce(
+(max,c)=>c.likes>max.likes?c:max
+);
+
+console.log(topComment);
+
+
+
 
