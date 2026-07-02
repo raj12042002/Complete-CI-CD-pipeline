@@ -1,0 +1,842 @@
+
+
+### Hour 1 (0–60 minutes): Jenkins Basics
+
+#### 0–15 min: Jenkins Fundamentals
+
+Learn:
+
+* What is Jenkins?
+* Why CI/CD is needed
+* Jenkins Architecture
+* Master (Controller) and Agent
+* Jobs
+* Plugins
+* Workspace
+
+Remember this interview answer:
+
+> Jenkins is an open-source automation server used to automate Continuous Integration and Continuous Delivery (CI/CD). It automates building, testing, and deploying applications.
+
+---
+
+#### 15–30 min: Installation
+
+Know these commands (Ubuntu):
+
+```bash
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+
+wget -O /usr/share/keyrings/jenkins-keyring.asc \
+https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+/etc/apt/sources.list.d/jenkins.list
+
+sudo apt update
+
+sudo apt install jenkins -y
+
+sudo systemctl enable jenkins
+
+sudo systemctl start jenkins
+
+sudo systemctl status jenkins
+```
+
+Know how to access:
+
+```
+http://server-ip:8080
+```
+
+Know how to get the admin password:
+
+```bash
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+```
+
+---
+
+#### 30–45 min: Freestyle Job
+
+Learn:
+
+* New Item
+* Freestyle Project
+* Source Code Management
+* Build Trigger
+* Execute Shell
+* Console Output
+
+Example build:
+
+```bash
+echo "Building Application"
+
+date
+
+hostname
+
+pwd
+
+ls
+```
+
+---
+
+#### 45–60 min: Pipeline Basics
+
+Know the difference:
+
+Declarative
+
+```groovy
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Build') {
+            steps {
+                echo 'Building'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                echo 'Deploying'
+            }
+        }
+    }
+}
+```
+
+Scripted
+
+```groovy
+node {
+
+    stage('Build'){
+        echo "Building"
+    }
+
+    stage('Test'){
+        echo "Testing"
+    }
+
+    stage('Deploy'){
+        echo "Deploying"
+    }
+
+}
+```
+
+Interview:
+
+**Which is better?**
+
+Declarative is preferred.
+
+---
+
+# Hour 2 (60–120 minutes)
+
+---
+
+## Jenkins + GitHub
+
+Learn:
+
+```groovy
+git url:'https://github.com/project.git'
+```
+
+---
+
+## Jenkins + Maven
+
+Commands
+
+```bash
+mvn clean
+
+mvn compile
+
+mvn test
+
+mvn package
+```
+
+Know:
+
+```
+pom.xml
+```
+
+contains
+
+* dependencies
+
+* plugins
+
+* build configuration
+
+---
+
+## Jenkins + SonarQube
+
+Remember:
+
+```
+Quality Analysis
+```
+
+Pipeline
+
+```groovy
+stage('Sonar') {
+
+ steps{
+
+ sh 'mvn sonar:sonar'
+
+ }
+
+}
+```
+
+Know:
+
+Quality Gate
+
+If code quality fails
+
+↓
+
+Deployment stops.
+
+---
+
+## Artifact
+
+Know
+
+```
+JAR
+
+WAR
+
+ZIP
+```
+
+Upload
+
+```
+S3
+
+Nexus
+
+JFrog Artifactory
+```
+
+Pipeline
+
+```groovy
+aws s3 cp target/app.war s3://mybucket/
+```
+
+---
+
+## Terraform
+
+Pipeline
+
+```groovy
+stage('Terraform Init'){
+
+steps{
+
+sh 'terraform init'
+
+}
+
+}
+```
+
+```groovy
+stage('Plan'){
+
+steps{
+
+sh 'terraform plan'
+
+}
+
+}
+```
+
+```groovy
+stage('Apply'){
+
+steps{
+
+sh 'terraform apply -auto-approve'
+
+}
+
+}
+```
+
+---
+
+## Security Scan
+
+Tools
+
+* Trivy
+
+* SonarQube
+
+* OWASP Dependency Check
+
+Pipeline
+
+```groovy
+sh 'trivy image myimage'
+```
+
+---
+
+## Docker Build
+
+```groovy
+sh 'docker build -t app .'
+```
+
+```groovy
+sh 'docker push dockerhub/app'
+```
+
+---
+
+## Kubernetes Deploy
+
+```groovy
+sh 'kubectl apply -f deployment.yaml'
+```
+
+---
+
+## Deployment Strategies
+
+### Blue Green
+
+```
+Blue
+
+↓
+
+Green
+
+↓
+
+Switch Traffic
+```
+
+No downtime.
+
+---
+
+### Canary
+
+```
+5%
+
+↓
+
+20%
+
+↓
+
+50%
+
+↓
+
+100%
+```
+
+Monitor every step.
+
+---
+
+### Rolling Update
+
+```
+Pod1
+
+↓
+
+Pod2
+
+↓
+
+Pod3
+```
+
+Replace one pod at a time.
+
+---
+
+## Complete Pipeline Flow
+
+```text
+GitHub
+↓
+
+Webhook
+↓
+
+Jenkins
+↓
+
+Checkout Code
+↓
+
+Maven Build
+↓
+
+Unit Test
+↓
+
+SonarQube Scan
+↓
+
+Quality Gate
+↓
+
+Build Docker Image
+↓
+
+Push Docker Image
+↓
+
+Terraform Provision
+↓
+
+Deploy to Kubernetes
+↓
+
+Smoke Test
+↓
+
+Approval
+↓
+
+Production
+↓
+
+Monitoring
+```
+
+---
+
+## 15 Interview Questions to Memorize
+
+1. What is Jenkins?
+2. Explain CI/CD.
+3. Freestyle vs Pipeline jobs.
+4. Declarative vs Scripted Pipeline.
+5. What is a Jenkinsfile?
+6. What are Jenkins Agents?
+7. How do you trigger a build from GitHub?
+8. How do you integrate Maven with Jenkins?
+9. What is SonarQube?
+10. What is a Quality Gate?
+11. How do you store artifacts?
+12. How do you deploy to Kubernetes using Jenkins?
+13. How do you run Terraform from Jenkins?
+14. What deployment strategies have you used (Blue-Green, Canary, Rolling)?
+15. How do you secure Jenkins?
+
+### What to focus on for interviews
+
+Given your background at RITES and your target DevOps roles, prioritize being able to **explain** the workflow rather than memorizing every Jenkins feature. If you can confidently walk an interviewer through:
+
+**GitHub → Jenkins → Maven → SonarQube → Docker → Terraform → Kubernetes → Monitoring**
+
+and explain what happens at each stage, you'll cover the core concepts that are commonly discussed in entry-level to early-career DevOps interviews. 
+After that, reinforce your learning by building one complete pipeline in a lab environment.
+
+
+devops-cicd-project/
+├── app/
+├── tests/
+├── Dockerfile
+├── Jenkinsfile
+├── requirements.txt
+├── terraform/
+│   ├── main.tf
+│   ├── variables.tf
+│   └── outputs.tf
+├── k8s/
+│   ├── deployment.yaml
+│   ├── service.yaml
+│   └── ingress.yaml
+├── monitoring/
+│   ├── prometheus.yml
+│   └── grafana/
+├── sonar-project.properties
+└── README.md
+
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: demo
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: demo
+
+  template:
+    metadata:
+      labels:
+        app: demo
+
+    spec:
+      containers:
+      - name: demo
+        image: yourdockerhub/demo-app:latest
+        ports:
+        - containerPort: 5000
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY . .
+
+RUN pip install -r requirements.txt
+
+CMD ["python","app.py"]
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+resource "aws_instance" "jenkins" {
+  ami           = "ami-xxxxxxxx"
+  instance_type = "t3.small"
+
+  tags = {
+    Name = "jenkins-server"
+  }
+}
+
+pipeline {
+    agent any
+
+    environment {
+        IMAGE = "yourdockerhub/demo-app:${BUILD_NUMBER}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/your-org/demo-app.git'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                sh 'pip install -r requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh 'pytest'
+            }
+        }
+
+        stage('SonarQube Scan') {
+            steps {
+                sh 'sonar-scanner'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t $IMAGE .'
+            }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                sh 'trivy image $IMAGE'
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                sh 'docker push $IMAGE'
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform') {
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl apply -f k8s/'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment Successful'
+        }
+        failure {
+            echo 'Deployment Failed'
+        }
+    }
+}
+
+Developer
+    │
+    ▼
+GitHub Repository
+    │
+    ▼
+Webhook
+    │
+    ▼
+Jenkins
+    │
+    ├── Checkout Source Code
+    ├── Install Dependencies
+    ├── Run Unit Tests
+    ├── Run SonarQube Scan
+    ├── Enforce Quality Gate
+    ├── Build Docker Image
+    ├── Scan Image with Trivy
+    ├── Push Image to Registry
+    ├── Terraform Plan
+    ├── Terraform Apply
+    ├── Deploy to Kubernetes
+    ├── Smoke Test
+    └── Notify Slack/Email
+
+
+// 💰 AWS Learning Environment Cost Calculator
+
+// 📦 AWS Resources
+const awsResources = [
+    {
+        resource: "EC2 (t3.medium)",
+        minCost: 2500,
+        maxCost: 4000
+    },
+    {
+        resource: "EKS Control Plane",
+        minCost: 6000,
+        maxCost: 8000
+    },
+    {
+        resource: "2 Worker Nodes",
+        minCost: 8000,
+        maxCost: 15000
+    },
+    {
+        resource: "Amazon ECR",
+        minCost: 200,
+        maxCost: 500
+    },
+    {
+        resource: "CloudWatch",
+        minCost: 500,
+        maxCost: 2000
+    }
+];
+
+// 📊 Calculate totals
+let minTotal = 0;
+let maxTotal = 0;
+
+console.log("========== AWS Learning Environment ==========\n");
+
+awsResources.forEach(item => {
+    console.log(`${item.resource}`);
+    console.log(`   Minimum : ₹${item.minCost.toLocaleString("en-IN")}`);
+    console.log(`   Maximum : ₹${item.maxCost.toLocaleString("en-IN")}\n`);
+
+    minTotal += item.minCost;
+    maxTotal += item.maxCost;
+});
+
+// 📈 Average Cost
+const avgCost = Math.round((minTotal + maxTotal) / 2);
+
+// 💰 Display Summary
+console.log("==============================================");
+console.log(`Minimum Monthly Cost : ₹${minTotal.toLocaleString("en-IN")}`);
+console.log(`Maximum Monthly Cost : ₹${maxTotal.toLocaleString("en-IN")}`);
+console.log(`Average Monthly Cost : ₹${avgCost.toLocaleString("en-IN")}`);
+console.log("==============================================");
+
+// 💡 Cost Saving Tips
+console.log("\n💡 Cost Optimization Tips");
+console.log("-------------------------");
+console.log("✅ Use Minikube instead of Amazon EKS");
+console.log("✅ Use Docker Desktop for local Kubernetes");
+console.log("✅ Stop EC2 instances when not in use");
+console.log("✅ Use AWS Free Tier wherever possible");
+console.log("✅ Delete unused Docker images and volumes");
+console.log("✅ Enable Auto Scaling only when required");
+console.log("✅ Use Spot Instances for cheaper compute");
+console.log("✅ Monitor billing using AWS Cost Explorer");
+
+
+
+
+========== AWS Learning Environment ==========
+
+EC2 (t3.medium)
+   Minimum : ₹2,500
+   Maximum : ₹4,000
+
+EKS Control Plane
+   Minimum : ₹6,000
+   Maximum : ₹8,000
+
+2 Worker Nodes
+   Minimum : ₹8,000
+   Maximum : ₹15,000
+
+Amazon ECR
+   Minimum : ₹200
+   Maximum : ₹500
+
+CloudWatch
+   Minimum : ₹500
+   Maximum : ₹2,000
+
+==============================================
+Minimum Monthly Cost : ₹17,200
+Maximum Monthly Cost : ₹29,500
+Average Monthly Cost : ₹23,350
+==============================================
+
+💡 Cost Optimization Tips
+-------------------------
+✅ Use Minikube instead of Amazon EKS
+✅ Use Docker Desktop for local Kubernetes
+✅ Stop EC2 instances when not in use
+✅ Use AWS Free Tier wherever possible
+✅ Delete unused Docker images and volumes
+✅ Enable Auto Scaling only when required
+✅ Use Spot Instances for cheaper compute
+✅ Monitor billing using AWS Cost Explorer
+
+
+// 💰 AWS Learning Environment Cost Calculator
+
+// 📦 AWS Resources
+const resources = [
+  { name: "EC2 (t3.medium)", min: 2500, max: 4000 },
+  { name: "EKS Control Plane", min: 6000, max: 8000 },
+  { name: "2 Worker Nodes", min: 8000, max: 15000 },
+  { name: "Amazon ECR", min: 200, max: 500 },
+  { name: "CloudWatch", min: 500, max: 2000 }
+];
+
+let minTotal = 0;
+let maxTotal = 0;
+
+console.log("========== AWS Monthly Cost ==========\n");
+
+resources.forEach(resource => {
+    console.log(`📦 ${resource.name}`);
+    console.log(`   Min Cost : ₹${resource.min}`);
+    console.log(`   Max Cost : ₹${resource.max}\n`);
+
+    minTotal += resource.min;
+    maxTotal += resource.max;
+});
+
+const average = Math.round((minTotal + maxTotal) / 2);
+
+console.log("======================================");
+console.log(`💰 Minimum Monthly Cost : ₹${minTotal}`);
+console.log(`💰 Maximum Monthly Cost : ₹${maxTotal}`);
+console.log(`📊 Average Monthly Cost : ₹${average}`);
+console.log("======================================");
+
+console.log("\n💡 Cost Saving Tips");
+console.log("✔ Use Minikube instead of EKS");
+console.log("✔ Stop EC2 when idle");
+console.log("✔ Use AWS Free Tier");
+console.log("✔ Use Spot Instances");
+console.log("✔ Monitor billing regularly");
+
+# 💰 AWS Learning Environment Cost Calculator
+
+# 📦 AWS Resources
+resources = [
+    {"name": "EC2 (t3.medium)", "min": 2500, "max": 4000},
+    {"name": "EKS Control Plane", "min": 6000, "max": 8000},
+    {"name": "2 Worker Nodes", "min": 8000, "max": 15000},
+    {"name": "Amazon ECR", "min": 200, "max": 500},
+    {"name": "CloudWatch", "min": 500, "max": 2000},
+]
+
+min_total = 0
+max_total = 0
+
+print("========== AWS Monthly Cost ==========\n")
+
+for resource in resources:
+    print(f"📦 {resource['name']}")
+    print(f"   Min Cost : ₹{resource['min']}")
+    print(f"   Max Cost : ₹{resource['max']}\n")
+
+    min_total += resource["min"]
+    max_total += resource["max"]
+
+average = (min_total + max_total) // 2
+
+print("======================================")
+print(f"💰 Minimum Monthly Cost : ₹{min_total}")
+print(f"💰 Maximum Monthly Cost : ₹{max_total}")
+print(f"📊 Average Monthly Cost : ₹{average}")
+print("======================================")
+
+print("\n💡 Cost Saving Tips")
+print("✔ Use Minikube instead of EKS")
+print("✔ Stop EC2 when idle")
+print("✔ Use AWS Free Tier")
+print("✔ Use Spot Instances")
+print("✔ Monitor billing regularly")
+
